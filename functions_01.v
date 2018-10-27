@@ -19,9 +19,7 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
         | [] => (0, 0)
         | h :: t => 
           (
-            (
-              1 # (Pos.of_nat (fact i * fact (j-i)))
-            )
+            (1 # (Pos.of_nat (fact i * fact (j-i))))
                                 qp/ 
                       (get_sgn (i + j) qp* h)
           )
@@ -31,6 +29,3 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
           )
         end
   end.
-  
-Fixpoint product_pt_list (n : positive) (m j : nat) :=
-  
