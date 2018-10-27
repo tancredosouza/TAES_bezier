@@ -5,8 +5,6 @@ Require Export List.
 Import ListNotations.
 Require Export Coq.Arith.Factorial.
 
-Require Import PeanoNat.
-
 Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat): (prod Q Q) := 
   match count with
     | O => (0,0) 
@@ -28,5 +26,4 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat): (prod Q Q) :=
           )
         end
   end.
-  
   
