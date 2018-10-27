@@ -5,7 +5,13 @@ Require Export List.
 Import ListNotations.
 Require Export Coq.Arith.Factorial.
 
-Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat): (prod Q Q) := 
+Definition get_sgn (k : nat) : Q :=
+  match Nat.even k with
+    | true => 1
+    | false => inject_Z (Z.opp 1) 
+  end.
+
+Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) := 
   match count with
     | O => (0,0) 
     | S count' =>
@@ -14,16 +20,17 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat): (prod Q Q) :=
         | h :: t => 
           (
             (
-              1 # (Pos.of_nat (fact i * fact (j-i))))
+              1 # (Pos.of_nat (fact i * fact (j-i)))
+            )
                                 qp/ 
-                                h
+                      (get_sgn (i + j) qp* h)
           )
-           
-          pp+ 
-          
+          pp+
           (
             sum_pt_list t (S i) j count'
           )
         end
   end.
+  
+Fixpoint product_pt_list (n : positive) (m j : nat) :=
   
