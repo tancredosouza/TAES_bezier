@@ -55,18 +55,21 @@ Fixpoint prod_pt_list (n m : nat) : Q :=
     | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_pt_list n m')
   end.
 
+Fixpoint pow (x : Q) (n : nat) : Q :=
+  match n with
+    | O => 1
+    | S n' => Qmult x (pow x n')
+  end.
+
 
 Definition get_cohefficient (j n : nat) (l : list (prod Q Q) ) : (prod Q Q) :=
   (prod_pt_list n (Nat.pred j)) qp* (sum_pt_list l O j (length l)).
-
 
 Fixpoint polynomial (x : Q) (j : nat) (l : list (prod Q Q)) : (prod Q Q) :=
   match l with
     | [] => ( 0 , 0 )
     | [a] => a
-    | h :: t => x qp* h pp+ (polynomial x (S j) t)
+    | h :: t => (pow x j) qp* h pp+ (polynomial x (S j) t)
   end.
-  
-  
-  
-  
+
+
