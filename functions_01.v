@@ -8,7 +8,11 @@ Require Export BinNums BinPos Pnat.
 Require Import BinNat Bool Equalities GenericMinMax
  OrdersFacts ZAxioms ZProperties.
 Require BinIntDef.
+(*
 
+  https://coq.inria.fr/library/Coq.ZArith.Znat.html
+
+*)
 
 Local Open Scope Z_scope.
 
