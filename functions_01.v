@@ -19,7 +19,7 @@ Local Open Scope Z_scope.
 Fixpoint fact_pos (n : nat) : positive :=
   match n with
     | O => 1
-    | S n' => (Pos.of_nat n) * (fact_Z n')
+    | S n' => (Pos.of_nat n) * (fact_pos n')
   end.
 
 Compute (fact_pos 13).
@@ -48,3 +48,11 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
           )
         end
   end.
+
+Fixpoint prod_pt_list (m n : nat) : Q :=
+  match m with
+    | O => inject_Z (Z.of_nat n)
+    | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_pt_list m' n)
+  end.
+
+
