@@ -16,13 +16,13 @@ Require BinIntDef.
 
 Local Open Scope Z_scope.
 
-Fixpoint fact_Z (n : nat) : positive :=
+Fixpoint fact_pos (n : nat) : positive :=
   match n with
     | O => 1
     | S n' => (Pos.of_nat n) * (fact_Z n')
   end.
 
-Compute (fact_Z 13).
+Compute (fact_pos 13).
 
 Definition get_sgn (k : Z) : Q :=
   match (Z.even k) with
@@ -38,7 +38,7 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
         | [] => (0, 0)
         | h :: t => 
           (
-            (1 # (fact_Z i * fact_Z (j-i)))
+            (1 # (fact_pos i * fact_pos (j-i)))
                                 qp/ 
                       (get_sgn (Z.of_nat (i + j)) qp* h)
           )
