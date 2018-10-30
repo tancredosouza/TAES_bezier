@@ -49,10 +49,10 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
         end
   end.
 
-Fixpoint prod_pt_list (m n : nat) : Q :=
+Fixpoint prod_pt_list (n m : nat) : Q :=
   match m with
     | O => inject_Z (Z.of_nat n)
-    | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_pt_list m' n)
+    | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_pt_list n m')
   end.
 
 
