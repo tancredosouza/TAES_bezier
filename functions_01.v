@@ -61,15 +61,12 @@ Fixpoint pow (x : Q) (n : nat) : Q :=
     | S n' => Qmult x (pow x n')
   end.
 
-
 Definition get_cohefficient (j n : nat) (l : list (prod Q Q) ) : (prod Q Q) :=
   (prod_pt_list n (Nat.pred j)) qp* (sum_pt_list l O j (length l)).
 
-Fixpoint polynomial (x : Q) (j : nat) (l : list (prod Q Q)) : (prod Q Q) :=
+Fixpoint polynomial (t : Q) (j : nat) (l : list (prod Q Q)) : (prod Q Q) :=
   match l with
     | [] => ( 0 , 0 )
     | [a] => a
-    | h :: t => (pow x j) qp* h pp+ (polynomial x (S j) t)
+    | h :: b => (pow t j) qp* h pp+ (polynomial t (S j) b)
   end.
-
-
