@@ -56,3 +56,7 @@ Fixpoint prod_pt_list (n m : nat) : Q :=
   end.
 
 
+Definition get_cohefficient (j n : nat) (l : list (prod Q Q) ) : (prod Q Q) :=
+  (prod_pt_list n (Nat.pred j)) qp* (sum_pt_list l O j (length l)).
+
+
