@@ -70,3 +70,6 @@ Fixpoint polynomial (t : Q) (j : nat) (l : list (prod Q Q)) : (prod Q Q) :=
     | [a] => a
     | h :: b => (pow t j) qp* h pp+ (polynomial t (S j) b)
   end.
+
+Definition calc_bezier_polynomial (l : list (prod Q Q)) (t : Q) :=
+  polynomial t 0 l. 
