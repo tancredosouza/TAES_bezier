@@ -30,17 +30,25 @@ Definition get_sgn (k : Z) : Q :=
     | false => inject_Z (Z.opp 1)
   end.
 
-Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) := 
+Fixpoint sum_pt_list (b : bezier_curve) (i j count : nat) : (prod Q Q) := 
   match count with
-    | O => (0,0) 
+    | O => 
+        match b with
+        | [] => (0, 0)
+        | h :: t => h
+        end
     | S count' =>
-        match l with
+        match b with
         | [] => (0, 0)
         | h :: t => 
           (
-            (1 # (fact_pos i * fact_pos (j-i)))
-                                qp/ 
-                      (get_sgn (Z.of_nat (i + j)) qp* h)
+                                 1
+                                 #
+                  ((fact_pos i) * (fact_pos (j-i)))
+                                  
+                                 qp*
+                                   
+                  (get_sgn (Z.of_nat (i + j)) qp* h)
           )
           pp+
           (
@@ -49,11 +57,14 @@ Fixpoint sum_pt_list (l : list (prod Q Q)) (i j count : nat) : (prod Q Q) :=
         end
   end.
 
-Fixpoint prod_pt_list (n m : nat) : Q :=
+Fixpoint prod_n_m (n m : nat) : Q :=
   match m with
     | O => inject_Z (Z.of_nat n)
-    | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_pt_list n m')
+    | S m' => (inject_Z (Z.of_nat (n - m))) * (prod_n_m n m')
   end.
+  
+Definition get_cohefficient (n j : nat) (b : bezier_curve) : (prod Q Q) :=
+  (prod_n_m n (Nat.pred j)) qp* (sum_pt_list b O j j).
 
 Fixpoint pow (x : Q) (n : nat) : Q :=
   match n with
@@ -61,15 +72,13 @@ Fixpoint pow (x : Q) (n : nat) : Q :=
     | S n' => Qmult x (pow x n')
   end.
 
-Definition get_cohefficient (j n : nat) (l : list (prod Q Q) ) : (prod Q Q) :=
-  (prod_pt_list n (Nat.pred j)) qp* (sum_pt_list l O j (length l)).
-
-Fixpoint polynomial (t : Q) (j : nat) (l : list (prod Q Q)) : (prod Q Q) :=
-  match l with
+Fixpoint polynomial (t : Q) (j n : nat) (b : bezier_curve) : (prod Q Q) :=
+  match b with
     | [] => ( 0 , 0 )
-    | [a] => a
-    | h :: b => (pow t j) qp* h pp+ (polynomial t (S j) b)
+    | h :: x => (pow t j) qp* (get_cohefficient n j b) pp+ (polynomial t (S j) n x)
   end.
 
-Definition calc_bezier_polynomial (l : list (prod Q Q)) (t : Q) :=
-  polynomial t 0 l. 
+Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
+  polynomial t 0 (Nat.pred (length b)) b. 
+  
+Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
