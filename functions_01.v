@@ -50,7 +50,7 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (prod Q
             match (calc_summ_pts (S i) j iter_left' b') with
               | None => None
               | Some Sj => 
-                  Some ((1 # (fact_pos i * fact_pos (j - i))) qp* (minus_1_sgn (i + j) qp* Pi) pp+ Sj)
+                  Some (((1 # (fact_pos i * fact_pos (j - i))) qp* (minus_1_sgn (i + j) qp* Pi)) pp+ Sj)
             end
         end
     end.
@@ -78,7 +78,7 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option
           | Some Ci =>
               match (calc_polynomial b (S j) n deg_left' t) with
                 | None => None
-                | Some Ck => Some ((pow t j) qp* Ci pp+ Ck)
+                | Some Ck => Some (((pow t j) qp* Ci) pp+ Ck)
               end
         end
   end.
