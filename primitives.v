@@ -24,10 +24,10 @@ Definition sum_pt (l: prod Q Q) (r: prod Q Q): prod Q Q :=
   | pair xl yl, pair xr yr => (Qred(xl + xr), Qred(yl + yr))
   end.
 
-Notation "l qp* r" := (mul_q_pt l r) (at level 76, left associativity).
+Notation "l qp* r" := (mul_q_pt l r) (at level 71, left associativity).
 
-Notation "l qp/ r" := (div_q_pt l r) (at level 74, left associativity).
+Notation "l qp/ r" := (div_q_pt l r) (at level 71, left associativity).
 
-Notation "l pp+ r" := (sum_pt l r) (at level 24, left associativity).
+Notation "l pp+ r" := (sum_pt l r) (at level 81, left associativity).
 
 Definition bezier_curve := list (prod Q Q).

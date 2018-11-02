@@ -41,7 +41,7 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (prod Q
         match b with
           | [] => None
           | Pi :: _ => 
-              Some ((1 # (fact_pos i * fact_pos (j - i))) qp* (minus_1_sgn (i + j) qp* Pi))
+              Some (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
         end
     | S iter_left' => 
         match b with
@@ -50,7 +50,7 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (prod Q
             match (calc_summ_pts (S i) j iter_left' b') with
               | None => None
               | Some Sj => 
-                  Some (((1 # (fact_pos i * fact_pos (j - i))) qp* (minus_1_sgn (i + j) qp* Pi)) pp+ Sj)
+                  Some (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi) pp+ Sj)
             end
         end
     end.
@@ -85,5 +85,6 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option
 
 Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
   calc_polynomial b 0 (Nat.pred (length b)) (length b) t.
-  
-Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+
+Compute (calc_point_at [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_polynomial [(inject_Z 3, inject_Z 2); (inject_Z 4, inject_Z 4); (inject_Z 7, inject_Z 2)] (1 # 2)).
