@@ -51,8 +51,8 @@ Lemma Qmult_1_l' : forall (q : Q), 1 * q = q.
 Proof.
 Admitted.
 
-Theorem p_1_l : forall (p : prod Q Q),
-  p = (1 qp* p).
+Theorem qp_1_l : forall (p : point),
+  (1 qp* p) = p.
 Proof.
   intros p. destruct p as [ a b ].
   simpl. 
