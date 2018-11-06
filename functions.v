@@ -15,7 +15,7 @@ Compute (ant_tail [1 # 2; 3 # 2; 3 # 6]).
 (*
   Firt approach: purely recursive approach
 *)
-Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): option (prod Q Q) :=
+Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): option (point) :=
   match b, n with
   | _, 0%nat      => None
   | h :: _, 1%nat => Some h
@@ -27,7 +27,7 @@ Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): option (prod Q Q
     end
   end.
 
-Definition calc_point_at (b: bezier_curve) (t: Q): option (prod Q Q) :=
+Definition calc_point_at (b: bezier_curve) (t: Q): option (point) :=
   inner_calc_point_at b t (length b).
 
 Compute (calc_point_at [(0, 1); (0, 0); (1, 0)] (1 # 2)).

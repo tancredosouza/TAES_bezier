@@ -14,7 +14,7 @@ Require BinIntDef.
 
 *)
 
-Local Open Scope Z_scope.
+Local Open Scope Q_scope.
 
 Fixpoint fact_pos (n : nat) : positive :=
   match n with
@@ -34,7 +34,7 @@ Definition minus_1_sgn (exp : nat) : Q :=
     | false => inject_Z (-1)
   end.
 
-Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (prod Q Q) :=
+Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (point) :=
   match iter_left with
     | O => None
     | 1%nat => 
@@ -58,13 +58,13 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (prod Q
 Definition calc_fact_div (n j : nat) : Q :=
   ((Z.of_nat (Pos.to_nat (fact_pos n))) # (fact_pos (n - j))).
 
-Fixpoint calc_Cj (n j : nat) (b : bezier_curve) : option (prod Q Q) :=
+Fixpoint calc_Cj (n j : nat) (b : bezier_curve) : option (point) :=
   match (calc_summ_pts 0 j (S j) b) with
     | None => None
     | Some Sj => Some ((calc_fact_div n j) qp* Sj)
   end.
 
-Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option (prod Q Q) :=
+Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option (point) :=
   match deg_left with
     | O => None
     | 1%nat =>
@@ -87,4 +87,3 @@ Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
   calc_polynomial b 0 (Nat.pred (length b)) (length b) t.
 
 Compute (calc_point_at [(0, 1); (0, 0); (1, 0)] (1 # 2)).
-Compute (calc_bezier_polynomial [(inject_Z 3, inject_Z 2); (inject_Z 4, inject_Z 4); (inject_Z 7, inject_Z 2)] (1 # 2)).
