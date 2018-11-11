@@ -1,4 +1,4 @@
-Require Export functions_01.
+Require Export bezier_curve_functiondefs.
 
 Import ListNotations.
 Check calc_bezier_polynomial.
