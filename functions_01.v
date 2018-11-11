@@ -86,4 +86,4 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option
 Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
   calc_polynomial b 0 (Nat.pred (length b)) (length b) t.
 
-Compute (calc_point_at [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).

@@ -27,7 +27,7 @@ Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): option (point) :
     end
   end.
 
-Definition calc_point_at (b: bezier_curve) (t: Q): option (point) :=
+Definition calc_bezier_recursive (b: bezier_curve) (t: Q): option (point) :=
   inner_calc_point_at b t (length b).
 
-Compute (calc_point_at [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
