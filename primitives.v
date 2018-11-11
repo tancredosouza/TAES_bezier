@@ -1,4 +1,6 @@
 Require Export QArith.
+Require Import Coq.Setoids.Setoid.
+
 
 Inductive prod (X Y : Type) : Type :=
   | pair: X -> Y -> prod X Y.
@@ -11,7 +13,7 @@ Notation "( x , y )" := (pair x y).
 
 Definition div_q_pt (l:Q) (r : point) : point := 
   match r with
-    | (x, y) => ((Qred (l / x), Qred (l / y)))
+    | (x, y) => ( (l / x),  (l / y))
   end.
 
 Definition mul_q_pt (l: Q) (r: point): point :=
@@ -21,7 +23,7 @@ Definition mul_q_pt (l: Q) (r: point): point :=
 
 Definition sum_pt (l: point) (r: point): point :=
   match l, r with
-  | (xl, yl), (xr, yr) => (Qred(xl + xr), Qred(yl + yr))
+  | (xl, yl), (xr, yr) => ((xl + xr), (yl + yr))
   end.
 
 Notation "l qp* r" := (mul_q_pt l r) (at level 74, left associativity).
@@ -39,25 +41,37 @@ Definition pt_y (p : prod Q Q) : Q :=
   match p with
     | (x, y) => y
   end.
+  
+Definition eq_pt (p q : point) : Prop :=
+  pt_x p == pt_x q /\ pt_y p == pt_y q.
+  
+Notation "p == q" := (eq_pt p q).
 
-Definition beq_pt (p q : point) : bool :=
-  match Qeq_bool (pt_x p) (pt_x q), Qeq_bool (pt_y p) (pt_y q) with
-    | false, _ => false
-    | _, false => false
-    | true, true => true
-  end.
-
-Lemma Qmult_1_l' : forall (q : Q), 1 * q = q.
+Theorem pp_0_l : forall (p : point),
+  ((0,0) pp+ p) == p.
 Proof.
-Admitted.
+  intros p. destruct p as [a b].
+  unfold "==". split. 
+  + simpl. Search (0 + _). apply Qplus_0_l.
+  + simpl. Search (0 + _). apply Qplus_0_l.
+Qed.
 
 Theorem qp_1_l : forall (p : point),
-  (1 qp* p) = p.
+  (1 qp* p) == p.
 Proof.
   intros p. destruct p as [ a b ].
-  simpl. 
-  rewrite Qmult_1_l'. rewrite Qmult_1_l'.  
-  reflexivity.
+  unfold eq_pt. split.
+  + simpl. apply Qmult_1_l.
+  + simpl. apply Qmult_1_l.
+Qed.
+
+Theorem qp_0_l : forall (p : point),
+  (0 qp* p) == (0, 0).
+Proof. 
+  intros p. destruct p as [a b].
+  unfold eq_pt. split.
+  + simpl. apply Qmult_0_l.
+  + simpl. apply Qmult_0_l.
 Qed.
 
 Definition bezier_curve := list point.
