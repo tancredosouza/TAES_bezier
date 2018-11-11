@@ -15,7 +15,8 @@
 *)
 
 Add LoadPath "~/Desktop/TAES_bezier".
-Require Export primitives.
+Require Export primitivedefs.
+
 Require Export List.
 Import ListNotations.
 
