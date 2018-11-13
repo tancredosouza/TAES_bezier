@@ -84,9 +84,6 @@ Definition eq_pt (p q : point) : Prop :=
   
 Notation "p == q" := (eq_pt p q).
 
-
-
-
 (*
 
     PROOF OF SOME BASIC THEOREMS
@@ -119,8 +116,3 @@ Proof.
   + simpl. apply Qmult_0_l.
   + simpl. apply Qmult_0_l.
 Qed.
-
-(*------------------------------------------*)
-
-(* A BEZIER CURVE IS A LIST OF POINTS *)
-Definition bezier_curve := list point.
