@@ -82,8 +82,36 @@ Definition pt_y (p : prod Q Q) : Q :=
 Definition eq_pt (p q : point) : Prop :=
   pt_x p == pt_x q /\ pt_y p == pt_y q.
   
+Definition eq_opt_pt (opt_p opt_q : option point) : Prop :=
+  match opt_p, opt_q with
+    | None, None => True
+    | None, _ => False
+    | _, None => False
+    | Some p, Some q => pt_x p == pt_x q /\ pt_y p == pt_y q
+   end.
+
+Definition beq_pt (p q : point) : bool :=
+  match Qeq_bool (pt_x p) (pt_x q), Qeq_bool (pt_y p) (pt_y q) with
+    | false, _ => false
+    | _, false => false
+    | true, true => true
+  end.
+  
 Notation "p == q" := (eq_pt p q).
 
+Definition beq_opt_pt (p1 q1 : option point) : bool :=
+  match p1, q1 with
+    | None, None => true
+    | None, _ => false
+    | _ , None => false
+    | Some p, Some q =>
+      match Qeq_bool (pt_x p) (pt_x q), Qeq_bool (pt_y p) (pt_y q) with
+        | false, _ => false
+        | _, false => false
+        | true, true => true
+      end
+  end.
+  
 (*
 
     PROOF OF SOME BASIC THEOREMS

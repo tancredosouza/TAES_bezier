@@ -20,6 +20,7 @@ Require Export primitivedefs.
 Require Export List.
 Import ListNotations.
 
+Definition bezier_curve := list point.
 
 (* AUXILIARY FUNCTIONS *)
 
@@ -205,3 +206,23 @@ Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
   calc_polynomial b 0 (Nat.pred (length b)) (length b) t.
 
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+
+
+Definition l1 := [(1 # 2, 4 # 8); (1 # 2, 4 # 8); (3 # 4, 4 # 7); (8 # 7, 10 # 11)].
+
+Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+
+Compute (calc_bezier_polynomial l1 (1 # 2)).
+Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
+
+Example t1 :
+(eq_opt_pt (calc_bezier_polynomial l1 (1 # 2)) (calc_bezier_polynomial (rev l1) (1 # 2))).
+Proof.
+  simpl. unfold calc_fact_div. unfold minus_1_sgn. simpl.
+  unfold inject_Z. simpl. split.
+  + ring.
+  + ring.
+Qed.
+
+Compute ( beq_pt (4275044352 # 6341787648, 288982579544064 # 500037272469504) (366585053184 # 543808290816, 657336595120128 # 1137413883691008)).
