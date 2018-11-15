@@ -1,7 +1,6 @@
 Require Export bezier_curve_functiondefs.
 
 Import ListNotations.
-Check calc_bezier_polynomial.
 
 (*
   Teorema 1 desse documento aqui
@@ -33,6 +32,21 @@ Proof.
   + destruct P0 as (x0, y0). destruct P1 as (x1, y1).
     simpl. repeat rewrite Qmult_1_l. ring.
 Qed.
+
+Theorem bezier_curve_fst_order_binomial : forall (b : bezier_curve) (P0 P1 p : point) (q : Q), 
+  b = [P0; P1] -> calc_bezier_binomial b q = Some p -> p == (((1 - q) qp* P0) pp+ (q qp* P1)).
+Proof.
+  intros b P0 P1 p q eq1 eq2.
+  unfold calc_bezier_binomial in eq2.
+  rewrite eq1 in eq2. simpl in eq2.
+  inversion eq2.
+  destruct P0 as (x0, y0). destruct P1 as (x1, y1). simpl.
+  unfold "==". simpl. split.
+  + ring.
+  + ring.
+Qed.
+
+
 
 Lemma aux : forall (h p2: point) (b : bezier_curve) (q : Q),
   calc_polynomial b 0 (Nat.pred (length b)) (length b) q = Some p2 ->
