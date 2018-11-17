@@ -1,3 +1,6 @@
 *.aux
 *.vo
 *.glob
+*.crashcoqide
+\#*\#
+.DS_Store

@@ -153,3 +153,5 @@ Proof.
   - simpl. apply Qeq_refl.
   - simpl. apply Qeq_refl.
 Qed.
+
+Definition bezier_curve := list point.
