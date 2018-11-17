@@ -260,7 +260,7 @@ Fixpoint inner_calc_bezier_binomial (b : bezier_curve) (q : Q) (j n : nat) :=
 
 (* 3. BINOMIAL DEFINITION *)
 Definition calc_bezier_binomial (b : bezier_curve) (t: Q) :=
-  inner_calc_bezier_binomial b t 0 ((length b) - 1).
+  inner_calc_bezier_binomial b t 0 (Nat.pred (length b)).
 
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
