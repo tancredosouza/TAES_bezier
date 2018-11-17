@@ -10,16 +10,6 @@ Require Import Coq.Classes.RelationClasses.
   http://www.ursoswald.ch/metapost/tutorial/BezierDoc/BezierDoc.pdf
 *)
 
-
-Lemma eq_pt_refl : forall (p : point),
-  p == p.
-Proof.
-  intros p. destruct p as [x y].
-  unfold "==". split.
-  - simpl. apply Qeq_refl.
-  - simpl. apply Qeq_refl.
-Qed.
-
 Theorem bezier_curve_fst_order_recursive : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
   b = [P0; P1] -> calc_bezier_recursive b q == (((1 - q) qp* P0) pp+ (q qp* P1)).
 Proof.
@@ -144,100 +134,13 @@ Proof.
   }
 Qed.
 
-Theorem bezier_curve_recursive_symm_firsttry : forall (b b' : bezier_curve) (P0 P1 : point) (q : Q),
+Theorem bezier_curve_recursive_symm_ : forall (b b' : bezier_curve) (P0 P1 : point) (q : Q),
   b = [P0; P1] ++ b' -> calc_bezier_recursive b q == calc_bezier_recursive (rev b) (1 - q).
 Proof.
-  intros b b' P0 P1 q eq1. 
-  induction b'.
+  intros b b' P0 P1 q H. induction b'.
   {
-    simpl in eq1. 
-    apply (bezier_curve_fst_order_recursive b P0 P1 q) in eq1 as H0.
-    simpl. 
-    assert (rev_eq1: rev b = [P1; P0]).
-    {
-      rewrite eq1. reflexivity.
-    }
-    apply (bezier_curve_fst_order_recursive (rev b) P1 P0 (1 - q)) in rev_eq1 as H1.
-    try rewrite H0. try rewrite H1.
-    destruct (calc_bezier_recursive b q) as []
+    simpl in H. 
+    apply (bezier_curve_recursive_symm_fstdegree b P0 P1 q) in H.
+    apply H.
   }
-Admitted.
-
-Lemma qp_mult_pt : forall (p : point) (q : Q),
-  (q qp* p) = (0, 0).
-Proof.
-Admitted. 
-
-Lemma inner_calc_point_at_empty_eq : forall (n : nat) (q : Q),
-  (inner_calc_point_at [] q n) = (0,0).
-Proof.
-  intros n q.
-  induction n.
-  {
-    simpl. reflexivity.
-  }
-  {
-    simpl. rewrite IHn. repeat rewrite qp_mult_pt.
-    simpl. reflexivity.
-  }
-Qed.
-
-Lemma inner_calc_point_at_empty : forall (n : nat) (q : Q),
-  (inner_calc_point_at [] q n) = (0,0).
-Proof.
-  intros n q.
-  induction n.
-  {
-    simpl. reflexivity.
-  }
-  {
-    simpl. inversion IHn. 
-    simpl. rewrite inner_calc_point_at_empty_eq. repeat rewrite qp_mult_pt.
-    simpl. reflexivity.
-  }
-Qed.
-
-Theorem inner_calc_point_at_app : forall (x' : bezier_curve) (P0 : point) (n n' : nat) (q : Q),
-  n = S n' -> (inner_calc_point_at (P0 :: x') q n) ==
-  (((1 - q) qp* (inner_calc_point_at (P0 :: (init x')) q (Nat.pred n))) 
-    pp+ (q qp* (inner_calc_point_at (x') q (Nat.pred n)))).
-Proof.
-  intros x' P0 n n' q H1. induction x'.
-  { 
-    simpl. rewrite H1.
-    simpl. 
-    {
-      simpl. Search (_ * 0). unfold "==". split.
-      {
-        simpl. repeat rewrite Qmult_0_r. reflexivity.
-      }
-      {
-        simpl. repeat rewrite Qmult_0_r. reflexivity.
-      }
-    }
-    {
-      Search (Nat.pred (S _)). rewrite Nat.pred_succ.
-      simpl. repeat rewrite inner_calc_point_at_empty.
-      inversion H1.
-    }
-  }
-  {}
-Qed.
-
-Theorem bezier_curve_recursive_symm : forall (b : bezier_curve) (q : Q),
-  calc_bezier_recursive b q = calc_bezier_recursive (rev b) (1 - q).
-Proof.
-  intros b q.
-  unfold calc_bezier_recursive.
-  induction b as [ | h b'].
-  {
-    simpl. reflexivity.
-  }
-  {
-    simpl. destruct (length b').
-    {
-      
-    }
-  }
-  
 Admitted.
