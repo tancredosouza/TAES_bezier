@@ -98,6 +98,7 @@ Definition beq_pt (p q : point) : bool :=
   end.
   
 Notation "p == q" := (eq_pt p q).
+Notation "p ?= q" := (beq_pt p q).
 
 Definition beq_opt_pt (p1 q1 : option point) : bool :=
   match p1, q1 with
