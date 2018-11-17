@@ -48,20 +48,16 @@ Compute (init [1 # 2; 3 # 2; 3 # 6]).
   B(t) = (1 - t) * B(init b, t) + t * B(tail b, t) 
   
 *)
-Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): option (point) :=
+Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): point :=
   match b, n with
-  | _, 0%nat      => None
-  | h :: _, 1%nat => Some h
+  | _, 0%nat      => (0 , 0)
+  | h :: _, 1%nat => h
   | b', S n'      =>
-    match inner_calc_point_at (init b') t n', inner_calc_point_at (tl b') t n' with
-    | None, _ => None
-    | _, None => None
-    | Some vl, Some vr => Some (((1 - t) qp* vl) pp+ (t qp* vr))
-    end
+     ((1 - t) qp* (inner_calc_point_at (init b') t n')) pp+ (t qp* (inner_calc_point_at (tl b') t n'))
   end.
 
 (* 1. PURELY RECURSIVE DEFINITION *)
-Definition calc_bezier_recursive (b: bezier_curve) (t: Q): option (point) :=
+Definition calc_bezier_recursive (b: bezier_curve) (t: Q): (point) :=
   inner_calc_point_at b t (length b).
 
 Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
@@ -121,23 +117,22 @@ Definition minus_1_sgn (exp : nat) : Q :=
             ----
             i = 0
 *)
-Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : option (point) :=
+Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : (point) :=
   match iter_left with
-    | O => None
+    | O => (0, 0)
     | 1%nat => 
         match b with
-          | [] => None
+          | [] => (0,0)
           | Pi :: _ => 
-              Some (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
         end
     | S iter_left' => 
         match b with
-          | [] => None
+          | [] => (0,0)
           | Pi :: b' => 
             match (calc_summ_pts (S i) j iter_left' b') with
-              | None => None
-              | Some Sj => 
-                  Some (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi) pp+ Sj)
+              | Sj => 
+                  (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi) pp+ Sj)
             end
         end
     end.
@@ -162,10 +157,9 @@ Definition calc_fact_div (n j : nat) : Q :=
   
           Cj = Mj * Sj
 *)
-Fixpoint calc_Cj (n j : nat) (b : bezier_curve) : option (point) :=
+Fixpoint calc_Cj (n j : nat) (b : bezier_curve) : (point) :=
   match (calc_summ_pts 0 j (S j) b) with
-    | None => None
-    | Some Sj => Some ((calc_fact_div n j) qp* Sj)
+    | Sj => ((calc_fact_div n j) qp* Sj)
   end.
 
 (*
@@ -181,21 +175,18 @@ Fixpoint calc_Cj (n j : nat) (b : bezier_curve) : option (point) :=
             ----
             j = 0
 *)
-Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : option (point) :=
+Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : (point) :=
   match deg_left with
-    | O => None
+    | O => (0,0)
     | 1%nat =>
         match (calc_Cj n j b) with
-          | None => None
-          | Some Cn => Some ((pow t j) qp* Cn)
+          | Cn => ((pow t j) qp* Cn)
         end
     | S deg_left' =>
         match (calc_Cj n j b) with
-          | None => None
-          | Some Ci =>
+          | Ci =>
               match (calc_polynomial b (S j) n deg_left' t) with
-                | None => None
-                | Some Ck => Some (((pow t j) qp* Ci) pp+ Ck)
+                | Ck => (((pow t j) qp* Ci) pp+ Ck)
               end
         end
   end.
@@ -215,17 +206,6 @@ Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 Compute (calc_bezier_polynomial l1 (1 # 2)).
 Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
-
-Example t1 :
-(eq_opt_pt (calc_bezier_polynomial l1 (1 # 2)) (calc_bezier_polynomial (rev l1) (1 # 2))).
-Proof.
-  simpl. unfold calc_fact_div. unfold minus_1_sgn. simpl.
-  unfold inject_Z. simpl. split.
-  + ring.
-  + ring.
-Qed.
-
-Compute ( beq_pt (4275044352 # 6341787648, 288982579544064 # 500037272469504) (366585053184 # 543808290816, 657336595120128 # 1137413883691008)).
 
 (* --------------------------- *)
 
@@ -247,19 +227,15 @@ Fixpoint calc_binomial_pos (n p : nat) : positive :=
 
 Compute (calc_binomial_pos 5 2). (* 10%positive *)
 
-
-Fixpoint inner_calc_bezier_binomial (b : bezier_curve) (q : Q) (j n : nat) :=
+Fixpoint inner_calc_bezier_binomial (b : bezier_curve) (q : Q) (j n : nat) : point :=
   match b with
-  | []     => None
-  | h :: t =>
-      match inner_calc_bezier_binomial t q (j+1) n with
-      | None     => Some ((((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j)) qp* h)
-      | Some res => Some (res pp+ ((((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j)) qp* h))
-      end
+  | [] => (0, 0)
+  | h :: [] => ((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j) qp* h
+  | h :: t => (inner_calc_bezier_binomial t q (j + 1) n) pp+ ((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j) qp* h
   end.
 
 (* 3. BINOMIAL DEFINITION *)
-Definition calc_bezier_binomial (b : bezier_curve) (t: Q) :=
+Definition calc_bezier_binomial (b : bezier_curve) (t: Q) : point :=
   inner_calc_bezier_binomial b t 0 (Nat.pred (length b)).
 
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
@@ -270,13 +246,13 @@ Compute (calc_bezier_polynomial l1 (1 # 2)).
 Compute (calc_bezier_binomial l1 (1 # 2)).
 
 Example t2:
-  eq_opt_pt (calc_bezier_polynomial (rev l1) (1 # 2)) (calc_bezier_binomial (rev l1) (1 # 2)).
+  (calc_bezier_polynomial (rev l1) (1 # 2)) == (calc_bezier_binomial (rev l1) (1 # 2)).
 Proof.
   unfold l1. unfold calc_bezier_polynomial. unfold calc_bezier_binomial.
   simpl. unfold calc_fact_div. unfold fact_pos. unfold minus_1_sgn. unfold inject_Z. simpl.
   split.
-  + ring.
-  + ring.
+  + simpl. ring.
+  + simpl. ring.
 Qed.
 
 (* --------------------------- *)

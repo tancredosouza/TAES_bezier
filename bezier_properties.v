@@ -2,6 +2,10 @@ Require Export bezier_curve_functiondefs.
 
 Import ListNotations.
 
+Check calc_bezier_polynomial.
+Require Import Coq.Setoids.Setoid.
+Require Import Coq.Classes.RelationClasses.
+
 (*
   Teorema 1 desse documento aqui
 
@@ -9,58 +13,147 @@ Import ListNotations.
 *)
 
 Theorem bezier_curve_fst_order_recursive : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
-  b = [P0; P1] -> calc_bezier_recursive b q = Some (((1 - q) qp* P0) pp+ (q qp* P1)).
+  b = [P0; P1] -> calc_bezier_recursive b q == (((1 - q) qp* P0) pp+ (q qp* P1)).
 Proof.
   intros b P0 P1 q H.
   unfold calc_bezier_recursive. 
   rewrite H. 
-  simpl. reflexivity.
+  simpl. (* apply eq_pt_refl. *)
+Admitted.
+
+Theorem bezier_curve_fst_order_recursive_rev : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
+  b = [P0; P1] -> calc_bezier_recursive (rev b) (1 - q) 
+    == (((1 - q) qp* P0) pp+ (q qp* P1)).
+Proof.
+  intros b P0 P1 q H.
+  rewrite H. simpl. unfold calc_bezier_recursive. simpl.
+  destruct P1 as [x1 y1]. destruct P0 as [x0 y0]. unfold "==". 
+  simpl. split. 
+  - ring.
+  - ring.
 Qed.
 
-Theorem bezier_curve_fst_order_polynomial : forall (b : bezier_curve) (P0 P1 p : point) (q : Q), 
-  b = [P0; P1] -> calc_bezier_polynomial b q = Some p -> p == (((1 - q) qp* P0) pp+ (q qp* P1)).
+
+Theorem bezier_curve_fst_order_polynomial : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
+  b = [P0; P1] -> calc_bezier_polynomial b q == (((1 - q) qp* P0) pp+ (q qp* P1)).
 Proof.
-  intros b P0 P1 p q eq1 eq2.
-  unfold calc_bezier_polynomial in eq2. 
-  rewrite eq1 in eq2. simpl in eq2.
-  inversion eq2. 
-  unfold calc_fact_div. simpl. unfold minus_1_sgn. simpl.
-  unfold inject_Z.
-  unfold "==". split.
-  + destruct P0 as (x0, y0). destruct P1 as (x1, y1).
-    simpl. repeat rewrite Qmult_1_l. ring.
-  + destruct P0 as (x0, y0). destruct P1 as (x1, y1).
-    simpl. repeat rewrite Qmult_1_l. ring.
+  intros b P0 P1 q H.
+  rewrite H. unfold calc_bezier_polynomial. unfold calc_polynomial. simpl.
+  unfold calc_fact_div. simpl. unfold minus_1_sgn. simpl. unfold inject_Z.
+  Search (_ qp* _). try rewrite qp_1_l.
+  destruct P0 as [x0 y0]. destruct P1 as [x1 y1]. unfold "==". split.
+  - simpl. ring.
+  - simpl. ring. 
 Qed.
 
-Theorem bezier_curve_fst_order_binomial : forall (b : bezier_curve) (P0 P1 p : point) (q : Q), 
-  b = [P0; P1] -> calc_bezier_binomial b q = Some p -> p == (((1 - q) qp* P0) pp+ (q qp* P1)).
+Theorem bezier_curve_fst_order_binomial : forall (P0 P1 : point) (q : Q), 
+  (calc_bezier_binomial [P0; P1] q) == (((1 - q) qp* P0) pp+ (q qp* P1)).
 Proof.
-  intros b P0 P1 p q eq1 eq2.
-  unfold calc_bezier_binomial in eq2.
-  rewrite eq1 in eq2. simpl in eq2.
-  inversion eq2.
+  intros P0 P1 q.
+  unfold calc_bezier_binomial. simpl.
   destruct P0 as (x0, y0). destruct P1 as (x1, y1). simpl.
   unfold "==". simpl. split.
   + ring.
   + ring.
 Qed.
 
-
-
-Lemma aux : forall (h p2: point) (b : bezier_curve) (q : Q),
-  calc_polynomial b 0 (Nat.pred (length b)) (length b) q = Some p2 ->
-  calc_polynomial (h::b) 0 (Nat.pred (length (h::b))) (length (h::b)) q = Some (h pp+ p2).
+Theorem bezier_curve_recursive_polynomial_eq_fstorder : 
+  forall (b : bezier_curve) (P0 P1 : point) (q : Q),
+    b = [P0; P1] -> calc_bezier_recursive b q == (calc_bezier_polynomial b q).
 Proof.
-  intros h p2 b q H1.
+  intros b P0 P1 q H. 
+  apply (bezier_curve_fst_order_recursive b P0 P1 q) in H as H1.
+  apply (bezier_curve_fst_order_polynomial b P0 P1 q) in H as H2.
+  destruct (calc_bezier_polynomial b q) as [ x3 y3 ].
+  destruct (calc_bezier_recursive b q) as [ x4 y4 ].
+  destruct P0 as [ x0 y0 ]. destruct P1 as [ x1 y1 ].
+  assert (HX3 : Qeq x3 ((1 - q) * x0 + q * x1)).
+  {
+    unfold "==" in H2. destruct H2 as [H2a H2b].
+    simpl in H2a. apply H2a.
+  }
+  assert (HX4 : Qeq x4 ((1 - q) * x0 + q * x1)).
+  {
+    unfold "==" in H1. destruct H1 as [H1a H1b].
+    simpl in H1a. apply H1a.
+  }
+  assert (HY3 : Qeq y3 ((1 - q) * y0 + q * y1)).
+  {
+    unfold "==" in H2. destruct H2 as [H2a H2b].
+    simpl in H2b. apply H2b.
+  }
+  assert (HY4 : Qeq y4 ((1 - q) * y0 + q * y1)).
+  {
+    unfold "==" in H1. destruct H1 as [H1a H1b].
+    simpl in H1b. apply H1b.
+  }
   
+  unfold "==". simpl. split.
+  {
+    rewrite HX3. rewrite HX4. apply Qeq_refl.
+  }
+  {
+    rewrite HY3. rewrite HY4. apply Qeq_refl.
+  }
+   
 Qed.
-Theorem bezier_polynomial_recursive_eq : forall (b : bezier_curve) (q : Q),
-  calc_bezier_recursive b q = calc_bezier_polynomial b q.
-Proof. 
-  intros b q. 
-  unfold calc_bezier_recursive. unfold calc_bezier_polynomial.
-  induction b as [ | h b' IHb'].
-  + auto.
-  + 
+
+Lemma bezier_curve_recursive_symm_fstdegree : 
+  forall (b : bezier_curve) (P0 P1 : point) (q : Q),
+    b = [P0; P1] -> 
+      calc_bezier_recursive b q == calc_bezier_recursive (rev b) (1 - q).
+Proof.
+  intros b P0 P1 q H.
+  apply (bezier_curve_fst_order_recursive b P0 P1 q) in H as H1.
+  apply (bezier_curve_fst_order_recursive_rev b P0 P1 q) in H as H2.
+  
+  destruct (calc_bezier_recursive b q) as [ x3 y3 ].
+  destruct (calc_bezier_recursive (rev b) (1 - q)) as [ x4 y4 ].
+  
+  destruct P0 as [ x0 y0 ]. destruct P1 as [ x1 y1 ].
+  assert (HX3 : Qeq x3 ((1 - q) * x0 + q * x1)).
+  {
+    unfold "==" in H1. destruct H1 as [Ha Hb].
+    simpl in Ha. apply Ha.
+  }
+  assert (HX4 : Qeq x4 ((1 - q) * x0 + q * x1)).
+  {
+    unfold "==" in H2. destruct H2 as [Ha Hb].
+    simpl in Ha. apply Ha.
+  }
+  assert (HY3 : Qeq y3 ((1 - q) * y0 + q * y1)).
+  {
+    unfold "==" in H1. destruct H1 as [Ha Hb].
+    simpl in Hb. apply Hb.
+  }
+  assert (HY4 : Qeq y4 ((1 - q) * y0 + q * y1)).
+  {
+    unfold "==" in H2. destruct H2 as [Ha Hb].
+    simpl in Hb. apply Hb.
+  }
+  
+  unfold "==". simpl. split.
+  {
+    rewrite HX3. rewrite HX4. apply Qeq_refl.
+  }
+  {
+    rewrite HY3. rewrite HY4. apply Qeq_refl.
+  }
 Qed.
+
+Theorem bezier_curve_recursive_symm : forall (b b' : bezier_curve) (P0 P1 : point) (q : Q),
+  b = [P0; P1] ++ b' -> calc_bezier_recursive b q == calc_bezier_recursive (rev b) (1 - q).
+Proof.
+  intros b b'.
+  induction b'.
+  {
+    intros P0 P1 q H1.
+    simpl in H1.
+    apply (bezier_curve_recursive_symm_fstdegree b P0 P1 q) in H1 as Hsymm_basecase.
+    assumption. 
+  }
+  {
+    intros P0 P1 q H1. rewrite H1. simpl. 
+    unfold calc_bezier_recursive.
+  }
+Admitted.

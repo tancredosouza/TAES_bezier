@@ -98,19 +98,8 @@ Definition beq_pt (p q : point) : bool :=
   end.
   
 Notation "p == q" := (eq_pt p q).
+Notation "p ?= q" := (beq_pt p q).
 
-Definition beq_opt_pt (p1 q1 : option point) : bool :=
-  match p1, q1 with
-    | None, None => true
-    | None, _ => false
-    | _ , None => false
-    | Some p, Some q =>
-      match Qeq_bool (pt_x p) (pt_x q), Qeq_bool (pt_y p) (pt_y q) with
-        | false, _ => false
-        | _, false => false
-        | true, true => true
-      end
-  end.
   
 (*
 
@@ -143,4 +132,24 @@ Proof.
   unfold eq_pt. split.
   + simpl. apply Qmult_0_l.
   + simpl. apply Qmult_0_l.
+Qed.
+
+
+Theorem qp_mult_null_pt : forall (q : Q),
+  (q qp* (0, 0)) == (0, 0).
+Proof.
+  intros q.
+  unfold "==". simpl. split.
+  - apply Qmult_0_r.
+  - apply Qmult_0_r.
+Qed.
+
+
+Theorem eq_pt_refl : forall (p : point),
+  p == p.
+Proof.
+  intros p. destruct p as [x y].
+  unfold "==". split.
+  - simpl. apply Qeq_refl.
+  - simpl. apply Qeq_refl.
 Qed.
