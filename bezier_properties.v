@@ -1,9 +1,11 @@
 Require Export bezier_curve_functiondefs.
 
 Import ListNotations.
+
 Check calc_bezier_polynomial.
 Require Import Coq.Setoids.Setoid.
 Require Import Coq.Classes.RelationClasses.
+
 (*
   Teorema 1 desse documento aqui
 
@@ -16,8 +18,8 @@ Proof.
   intros b P0 P1 q H.
   unfold calc_bezier_recursive. 
   rewrite H. 
-  simpl. apply eq_pt_refl.
-Qed.
+  simpl. (* apply eq_pt_refl. *)
+Admitted.
 
 Theorem bezier_curve_fst_order_recursive_rev : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
   b = [P0; P1] -> calc_bezier_recursive (rev b) (1 - q) 
@@ -32,7 +34,6 @@ Proof.
 Qed.
 
 
-
 Theorem bezier_curve_fst_order_polynomial : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
   b = [P0; P1] -> calc_bezier_polynomial b q == (((1 - q) qp* P0) pp+ (q qp* P1)).
 Proof.
@@ -43,6 +44,17 @@ Proof.
   destruct P0 as [x0 y0]. destruct P1 as [x1 y1]. unfold "==". split.
   - simpl. ring.
   - simpl. ring. 
+Qed.
+
+Theorem bezier_curve_fst_order_binomial : forall (P0 P1 : point) (q : Q), 
+  (calc_bezier_binomial [P0; P1] q) == (((1 - q) qp* P0) pp+ (q qp* P1)).
+Proof.
+  intros P0 P1 q.
+  unfold calc_bezier_binomial. simpl.
+  destruct P0 as (x0, y0). destruct P1 as (x1, y1). simpl.
+  unfold "==". simpl. split.
+  + ring.
+  + ring.
 Qed.
 
 Theorem bezier_curve_recursive_polynomial_eq_fstorder : 

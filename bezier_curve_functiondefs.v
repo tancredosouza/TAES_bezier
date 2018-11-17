@@ -207,4 +207,52 @@ Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 Compute (calc_bezier_polynomial l1 (1 # 2)).
 Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
 
-Compute ( beq_pt (4275044352 # 6341787648, 288982579544064 # 500037272469504) (366585053184 # 543808290816, 657336595120128 # 1137413883691008)).
+(* --------------------------- *)
+
+(* AUXILIARY FUNCTIONS *)
+
+Fixpoint calc_binomial_pos (n p : nat) : positive :=
+  match p with
+  | O => 1%positive
+  | S p' =>
+      match Nat.eqb n p with
+      | true => 1%positive
+      | false =>
+          match n with
+          | S n' => (calc_binomial_pos n' p') + (calc_binomial_pos n' (S p'))
+          | _ => 1%positive
+          end
+      end
+  end.
+
+Compute (calc_binomial_pos 5 2). (* 10%positive *)
+
+Fixpoint inner_calc_bezier_binomial (b : bezier_curve) (q : Q) (j n : nat) : point :=
+  match b with
+  | [] => (0, 0)
+  | h :: [] => ((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j) qp* h
+  | h :: t => (inner_calc_bezier_binomial t q (j + 1) n) pp+ ((Zpos (calc_binomial_pos n j)) # 1) * (pow (1 - q) (n - j)) * (pow q j) qp* h
+  end.
+
+(* 3. BINOMIAL DEFINITION *)
+Definition calc_bezier_binomial (b : bezier_curve) (t: Q) : point :=
+  inner_calc_bezier_binomial b t 0 (Nat.pred (length b)).
+
+Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_binomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+
+Compute (calc_bezier_polynomial l1 (1 # 2)).
+Compute (calc_bezier_binomial l1 (1 # 2)).
+
+Example t2:
+  (calc_bezier_polynomial (rev l1) (1 # 2)) == (calc_bezier_binomial (rev l1) (1 # 2)).
+Proof.
+  unfold l1. unfold calc_bezier_polynomial. unfold calc_bezier_binomial.
+  simpl. unfold calc_fact_div. unfold fact_pos. unfold minus_1_sgn. unfold inject_Z. simpl.
+  split.
+  + simpl. ring.
+  + simpl. ring.
+Qed.
+
+(* --------------------------- *)
