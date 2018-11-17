@@ -86,11 +86,6 @@ Proof.
    
 Qed.
 
-
-Definition l2 := [(1 # 2, 1 # 4); (3 # 4, 8 # 4)].
-Compute (calc_bezier_recursive l2 (33 # 17)).
-
-
 Lemma bezier_curve_recursive_symm_fstdegree : 
   forall (b : bezier_curve) (P0 P1 : point) (q : Q),
     b = [P0; P1] -> 
@@ -134,13 +129,19 @@ Proof.
   }
 Qed.
 
-Theorem bezier_curve_recursive_symm_ : forall (b b' : bezier_curve) (P0 P1 : point) (q : Q),
+Theorem bezier_curve_recursive_symm : forall (b b' : bezier_curve) (P0 P1 : point) (q : Q),
   b = [P0; P1] ++ b' -> calc_bezier_recursive b q == calc_bezier_recursive (rev b) (1 - q).
 Proof.
-  intros b b' P0 P1 q H. induction b'.
+  intros b b'.
+  induction b'.
   {
-    simpl in H. 
-    apply (bezier_curve_recursive_symm_fstdegree b P0 P1 q) in H.
-    apply H.
+    intros P0 P1 q H1.
+    simpl in H1.
+    apply (bezier_curve_recursive_symm_fstdegree b P0 P1 q) in H1 as Hsymm_basecase.
+    assumption. 
+  }
+  {
+    intros P0 P1 q H1. rewrite H1. simpl. 
+    unfold calc_bezier_recursive.
   }
 Admitted.
