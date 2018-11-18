@@ -1,5 +1,5 @@
 Require Import auxiliary.
-Require Export primitivedefs.
+Require Export primitives.
 
 Require Export List.
 Import ListNotations.
