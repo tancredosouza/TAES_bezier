@@ -1,3 +1,6 @@
+Add LoadPath "bezier-functions".
+Add LoadPath "properties/fst_order_interpolation".
+
 Require Import auxiliary.
 Require Export primitives.
 
