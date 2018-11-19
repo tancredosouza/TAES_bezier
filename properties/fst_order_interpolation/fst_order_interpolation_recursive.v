@@ -18,8 +18,9 @@ Proof.
   intros b P0 P1 q H.
   unfold calc_bezier_recursive. 
   rewrite H. 
-  simpl. (* apply eq_pt_refl. *)
-Admitted.
+  simpl.
+  apply eq_pt_refl.
+Qed.
 
 Theorem bezier_curve_fst_order_interpolation_recursive_rev : forall (b : bezier_curve) (P0 P1 : point) (q : Q), 
   b = [P0; P1] -> calc_bezier_recursive (rev b) (1 - q) 
