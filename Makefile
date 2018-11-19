@@ -28,5 +28,8 @@ properties/fst_order_interpolation/fst_order_interpolation_recursive.vo: propert
 properties/fst_order_eq/fst_order_eq_recursive_polynomial.vo: properties/fst_order_eq/fst_order_eq_recursive_polynomial.v properties/fst_order_interpolation/fst_order_interpolation_polynomial.vo properties/fst_order_interpolation/fst_order_interpolation_recursive.vo
 	coqc properties/fst_order_eq/fst_order_eq_recursive_polynomial.v
 
+properties/fst_order_eq/fst_order_eq_polynomial_binomial.vo: properties/fst_order_eq/fst_order_eq_polynomial_binomial.v bezier-functions/binomial.vo bezier-functions/polynomial.vo
+	coqc properties/fst_order_eq/fst_order_eq_polynomial_binomial.v
+	
 properties/fst_order_symm/fst_order_symm_recursive.vo: properties/fst_order_symm/fst_order_symm_recursive.v properties/fst_order_interpolation/fst_order_interpolation_recursive.vo
 	coqc properties/fst_order_symm/fst_order_symm_recursive.v
