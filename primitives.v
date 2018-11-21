@@ -154,4 +154,13 @@ Proof.
   - simpl. apply Qeq_refl.
 Qed.
 
-Definition bezier_curve := list point.
+Inductive bezier_curve : Type :=
+  | nil : point -> bezier_curve
+  | cons : point -> bezier_curve -> bezier_curve.
+  
+
+Notation "[ a ]" := (nil a).
+(* 
+  TODO: add notation for [P0; ... Pn]
+*)
+Notation "a :: b" := (cons a b).
