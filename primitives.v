@@ -163,4 +163,5 @@ Notation "[ a ]" := (nil a).
 (* 
   TODO: add notation for [P0; ... Pn]
 *)
+Notation "[ x ; y ; .. ; z ]" := (cons x (cons y .. (cons z nil) ..)).
 Notation "a :: b" := (cons a b).
