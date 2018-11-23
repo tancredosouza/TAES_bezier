@@ -108,4 +108,4 @@ Definition l1 := [(1 # 2, 4 # 8); (1 # 2, 4 # 8); (3 # 4, 4 # 7); (8 # 7, 10 # 1
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 Compute (calc_bezier_polynomial l1 (1 # 2)).
-Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
+Compute (calc_bezier_polynomial [(3 # 4, 1 # 3); (3 # 9, 8 # 7); (36 # 72, 40 # 41)] (30 # 42)).
