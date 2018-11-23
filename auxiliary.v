@@ -6,6 +6,7 @@ Require Import primitives.
 Fixpoint bezier_curve_init (b : bezier_curve) : bezier_curve :=
   match b with
     | [P0] => [P0]
+    | Pi :: [P0] => [Pi]
     | Pi :: b' => Pi :: (bezier_curve_init b')
   end.
   
