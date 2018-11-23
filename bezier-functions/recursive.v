@@ -10,26 +10,18 @@ Require Export primitives.
   B(t) = (1 - t) * B(init b, t) + t * B(tail b, t) 
   
 *)
-
-Definition fool_coq_init (P : point) (b : bezier_curve) :=
-  P :: (bezier_curve_init b).
-
-Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n : nat) : point :=
-      match b, n with
-      | _, O => (0, 0)
-      | [P], _ => P
-      | P :: b', (S n') =>
-         ((1 - t) qp* (inner_calc_point_at (bezier_curve_init b) t n')) 
-           pp+ (t qp* (inner_calc_point_at (bezier_curve_tail b) t n'))
-      end.
+Fixpoint inner_calc_point_at (b: bezier_curve) (t: Q) (n: nat): point :=
+  match b, n with
+  | _, 0%nat      => (0 , 0)
+  | h :: _, 1%nat => h
+  | b', S n'      =>
+     ((1 - t) qp* (inner_calc_point_at (init b') t n')) pp+ (t qp* (inner_calc_point_at (tl b') t n'))
+  end.
 
 (* 1. PURELY RECURSIVE DEFINITION *)
 Definition calc_bezier_recursive (b: bezier_curve) (t: Q): (point) :=
-  inner_calc_point_at b t (bezier_curve_length b).
+  inner_calc_point_at b t (length b).
 
-(*
-  TODO: define more examples
-  Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
-*)
+Compute (calc_bezier_recursive [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 (* --------------------------- *)

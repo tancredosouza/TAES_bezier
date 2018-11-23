@@ -1,3 +1,4 @@
+
 Add LoadPath "bezier-functions".
 Add LoadPath "properties/fst_order_interpolation".
 
@@ -22,12 +23,21 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : (point) :=
   match iter_left with
     | O => (0, 0)
     | 1%nat => 
-        (1 # (fact_pos i * fact_pos (j - i)) 
-            qp* (minus_1_sgn (i + j) qp* (bezier_curve_head b)))
+        match b with
+          | [Pi] => 
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
+          | Pi :: _ =>
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
+        end
     | S iter_left' => 
-        match (calc_summ_pts (S i) j iter_left' (bezier_curve_tail b)) with
-          | Sj => 
-              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* (bezier_curve_head b)) pp+ Sj)
+        match b with
+          | [Pi] => 
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
+          | Pi :: b' => 
+            match (calc_summ_pts (S i) j iter_left' b') with
+              | Sj => 
+                  (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi) pp+ Sj)
+            end
         end
     end.
 
@@ -73,10 +83,16 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : (point
   match deg_left with
     | O => (0,0)
     | 1%nat =>
-        ((pow t j) qp* (calc_Cj n j b))
+        match (calc_Cj n j b) with
+          | Cn => ((pow t j) qp* Cn)
+        end
     | S deg_left' =>
-        (((pow t j) qp* (calc_Cj n j b)) 
-          pp+ (calc_polynomial b (S j) n deg_left' t))
+        match (calc_Cj n j b) with
+          | Ci =>
+              match (calc_polynomial b (S j) n deg_left' t) with
+                | Ck => (((pow t j) qp* Ci) pp+ Ck)
+              end
+        end
   end.
 
 
@@ -84,9 +100,7 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : (point
 Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
   calc_polynomial b 0 (Nat.pred (bezier_curve_length b)) (bezier_curve_length b) t.
 
-(*
-  TODO : add some examples
-  Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
+Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 
 Definition l1 := [(1 # 2, 4 # 8); (1 # 2, 4 # 8); (3 # 4, 4 # 7); (8 # 7, 10 # 11)].
@@ -95,5 +109,3 @@ Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 Compute (calc_bezier_polynomial l1 (1 # 2)).
 Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
-
-*)

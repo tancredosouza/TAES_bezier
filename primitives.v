@@ -31,14 +31,6 @@ Definition point := prod Q Q.
 Notation "( x , y )" := (pair x y).
 
 (*
-  Divide a point by a (q : Q) constant
-*)
-Definition div_q_pt (l:Q) (r : point) : point := 
-  match r with
-    | (x, y) => ( (l / x),  (l / y))
-  end.
-
-(*
   Multiply a point by a (q : Q) constant
 *)
 Definition mul_q_pt (l: Q) (r: point): point :=
@@ -163,5 +155,5 @@ Notation "[ a ]" := (nil a).
 (* 
   TODO: add notation for [P0; ... Pn]
 *)
-Notation "[ x ; y ; .. ; z ]" := (cons x (cons y .. (cons z nil) ..)).
+Notation "[ x ; y ; .. ; z ; k ]" := (cons x (cons y .. (cons z (nil k)) ..)).
 Notation "a :: b" := (cons a b).
