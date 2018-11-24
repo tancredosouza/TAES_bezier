@@ -1,11 +1,9 @@
+
 Add LoadPath "bezier-functions".
 Add LoadPath "properties/fst_order_interpolation".
 
 Require Import auxiliary.
 Require Export primitives.
-
-Require Export List.
-Import ListNotations.
 
 (*
   calc_summ_pts : Given a list of points,
@@ -26,13 +24,15 @@ Fixpoint calc_summ_pts (i j iter_left : nat) (b : bezier_curve) : (point) :=
     | O => (0, 0)
     | 1%nat => 
         match b with
-          | [] => (0,0)
-          | Pi :: _ => 
+          | [Pi] => 
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
+          | Pi :: _ =>
               (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
         end
     | S iter_left' => 
         match b with
-          | [] => (0,0)
+          | [Pi] => 
+              (1 # (fact_pos i * fact_pos (j - i)) qp* (minus_1_sgn (i + j) qp* Pi))
           | Pi :: b' => 
             match (calc_summ_pts (S i) j iter_left' b') with
               | Sj => 
@@ -98,7 +98,7 @@ Fixpoint calc_polynomial (b : bezier_curve) (j n deg_left: nat) (t : Q) : (point
 
 (* 2. POLYNOMIAL DEFINITION *)
 Definition calc_bezier_polynomial (b : bezier_curve) (t : Q) :=
-  calc_polynomial b 0 (Nat.pred (length b)) (length b) t.
+  calc_polynomial b 0 (Nat.pred (bezier_curve_length b)) (bezier_curve_length b) t.
 
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
@@ -108,4 +108,4 @@ Definition l1 := [(1 # 2, 4 # 8); (1 # 2, 4 # 8); (3 # 4, 4 # 7); (8 # 7, 10 # 1
 Compute (calc_bezier_polynomial [(0, 1); (0, 0); (1, 0)] (1 # 2)).
 
 Compute (calc_bezier_polynomial l1 (1 # 2)).
-Compute (calc_bezier_polynomial (rev l1) (1 # 2)).
+Compute (calc_bezier_polynomial [(3 # 4, 1 # 3); (3 # 9, 8 # 7); (36 # 72, 40 # 41)] (30 # 42)).

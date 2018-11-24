@@ -1,22 +1,37 @@
 Require Import QArith.
-Require Export List.
-Import ListNotations.
+Require Import primitives.
 
 (* AUXILIARY FUNCTIONS *)
 
-(* 
-  init: Given a list of type X,
-  this function returns the whole 
-  list except for the last element.
- *)
-Fixpoint init {X: Type} (l: list X): list X :=
-  match l with
-  | []      => []
-  | h :: [] => []
-  | h :: t  => h :: (init t)
+Fixpoint bezier_curve_init (b : bezier_curve) : bezier_curve :=
+  match b with
+    | [P0] => [P0]
+    | Pi :: [P0] => [Pi]
+    | Pi :: b' => Pi :: (bezier_curve_init b')
+  end.
+  
+Fixpoint bezier_curve_tail (b : bezier_curve) : bezier_curve :=
+  match b with
+    | [P0] => [P0]
+    | Pi :: b' => b'
+  end.
+  
+Fixpoint bezier_curve_length (b : bezier_curve) : nat :=
+  match b with
+    | [P0] => 1%nat
+    | P0 :: b' =>  S (bezier_curve_length b')
+  end.
+  
+Fixpoint bezier_curve_head (b : bezier_curve) : point :=
+  match b with
+    | [P0] => P0
+    | P0 :: _ => P0
   end.
 
-Compute (init [1 # 2; 3 # 2; 3 # 6]).
+
+(*
+  TODO: add some examples
+*)
 
 (*
   fact_pos : Given a natural n,
