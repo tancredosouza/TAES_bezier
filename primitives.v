@@ -51,7 +51,6 @@ Definition sum_pt (l: point) (r: point): point :=
   Some notations
 *)
 Notation "l qp* r" := (mul_q_pt l r) (at level 74, left associativity).
-Notation "l qp/ r" := (div_q_pt l r) (at level 74, left associativity).
 Notation "l pp+ r" := (sum_pt l r) (at level 76, left associativity).
 
 (*
@@ -152,8 +151,5 @@ Inductive bezier_curve : Type :=
   
 
 Notation "[ a ]" := (nil a).
-(* 
-  TODO: add notation for [P0; ... Pn]
-*)
 Notation "[ x ; y ; .. ; z ; k ]" := (cons x (cons y .. (cons z (nil k)) ..)).
 Notation "a :: b" := (cons a b).

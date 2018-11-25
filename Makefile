@@ -1,11 +1,11 @@
 clear:
-	rm -f **/*.glob **/.*.aux
-
-auxiliary.vo: auxiliary.v
-	coqc auxiliary.v
+	rm ./*.glob ./.*.aux ./**/*.glob ./**/.*.aux
 
 primitives.vo: primitives.v
 	coqc primitives.v
+
+auxiliary.vo: auxiliary.v primitives.vo
+	coqc auxiliary.v
 
 bezier-functions/binomial.vo: bezier-functions/binomial.v auxiliary.vo primitives.vo
 	coqc bezier-functions/binomial.v
@@ -42,3 +42,6 @@ properties/fst_order_symm/fst_order_symm_binomial.vo: properties/fst_order_symm/
 
 properties/fst_order_symm/fst_order_symm_recursive.vo: properties/fst_order_symm/fst_order_symm_recursive.v properties/fst_order_interpolation/fst_order_interpolation_recursive.vo
 	coqc properties/fst_order_symm/fst_order_symm_recursive.v
+
+examples/equivalent_exs.vo: examples/equivalent_exs.v bezier-functions/binomial.vo bezier-functions/recursive.vo bezier-functions/polynomial.vo auxiliary.vo primitives.vo
+	coqc examples/equivalent_exs.v
