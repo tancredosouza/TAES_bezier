@@ -36,13 +36,13 @@ properties/fst_order_eq/fst_order_eq_polynomial_binomial.vo: properties/fst_orde
 properties/fst_order_eq/fst_order_eq_binomial_recursive.vo: properties/fst_order_eq/fst_order_eq_binomial_recursive.v bezier-functions/binomial.vo bezier-functions/recursive.vo
 	coqc properties/fst_order_eq/fst_order_eq_binomial_recursive.v
 
-properties/fst_order_symm/fst_order_symm_polynomial.vo: properties/fst_order_symm/fst_order_symm_polynomial.v properties/fst_order_interpolation/fst_order_interpolation_polynomial.vo
+properties/fst_order_symm/fst_order_symm_polynomial.vo: properties/fst_order_symm/fst_order_symm_polynomial.v bezier-functions/polynomial.vo auxiliary.vo
 	coqc properties/fst_order_symm/fst_order_symm_polynomial.v
 
-properties/fst_order_symm/fst_order_symm_binomial.vo: properties/fst_order_symm/fst_order_symm_binomial.v properties/fst_order_interpolation/fst_order_interpolation_binomial.vo
+properties/fst_order_symm/fst_order_symm_binomial.vo: properties/fst_order_symm/fst_order_symm_binomial.v bezier-functions/binomial.vo auxiliary.vo
 	coqc properties/fst_order_symm/fst_order_symm_binomial.v
 
-properties/fst_order_symm/fst_order_symm_recursive.vo: properties/fst_order_symm/fst_order_symm_recursive.v properties/fst_order_interpolation/fst_order_interpolation_recursive.vo
+properties/fst_order_symm/fst_order_symm_recursive.vo: properties/fst_order_symm/fst_order_symm_recursive.v bezier-functions/recursive.vo auxiliary.vo
 	coqc properties/fst_order_symm/fst_order_symm_recursive.v
 
 examples/equivalent_exs.vo: examples/equivalent_exs.v bezier-functions/binomial.vo bezier-functions/recursive.vo bezier-functions/polynomial.vo auxiliary.vo primitives.vo
