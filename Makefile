@@ -1,5 +1,7 @@
 clear:
-	rm ./*.glob ./.*.aux ./**/*.glob ./**/.*.aux
+	find . -type f -name '*.glob' -delete
+	find . -type f -name '\.*.aux' -delete
+	find . -type f -name '*.vo' -delete
 
 primitives.vo: primitives.v
 	coqc primitives.v

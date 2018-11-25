@@ -81,3 +81,17 @@ Fixpoint calc_binomial_pos (n p : nat) : positive :=
           end
       end
   end.
+
+Fixpoint app (l r : bezier_curve) : bezier_curve :=
+  match l with
+  | [h] => h :: r
+  | h :: t => h :: app t r
+  end.
+
+Infix "++" := app (right associativity, at level 60).
+
+Fixpoint rev (b : bezier_curve) : bezier_curve :=
+  match b with
+  | [h] => [h]
+  | h :: t => (rev t) ++ [h]
+  end.  
